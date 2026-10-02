@@ -1,0 +1,280 @@
+{
+ "rules": [
+  {
+   "id": "anthropic.oauth-token",
+   "source": "custom",
+   "label": "Anthropic OAuth token",
+   "kind": "anthropicKey",
+   "confidence": "high",
+   "pattern": "\\b(?<secret>sk-ant-(?:oat|ort)01-[A-Za-z0-9_-]{32,})\\b",
+   "anchors": [
+    "sk-ant-oat01-",
+    "sk-ant-ort01-"
+   ],
+   "window": {
+    "before": 8,
+    "after": 512
+   },
+   "mask": {
+    "prefix": 12,
+    "suffix": 4
+   },
+   "description": "Claude Code / claude.ai OAuth access or refresh token as stored in .credentials.json"
+  },
+  {
+   "id": "aws.secret-access-key",
+   "kind": "awsSecretAccessKey",
+   "confidence": "high",
+   "pattern": "(?i)aws[_-]?secret[_-]?access[_-]?key[\"']?\\s*[:=]\\s*[\"']?(?<secret>[A-Za-z0-9/+=]{40})\\b",
+   "mask": {
+    "prefix": 0,
+    "suffix": 4
+   },
+   "anchors": [
+    "secret"
+   ],
+   "window": {
+    "before": 16,
+    "after": 128
+   },
+   "requireNear": {
+    "chars": ":=",
+    "within": 24
+   },
+   "source": "custom",
+   "label": "AWS secret access key"
+  },
+  {
+   "id": "url.credential",
+   "kind": "databaseURL",
+   "confidence": "high",
+   "canonicalizer": "url",
+   "pattern": "\\b(?<secret>(?:postgres(?:ql)?|mysql|mongodb(?:\\+srv)?|redis|rediss|amqp|amqps|mssql|jdbc:[a-z]+)://[^\\s:/@\"'<>]{1,64}:(?<password>[^\\s@\"'<>]{4,256})@[^\\s\"'<>]{1,512})",
+   "excludedContext": [
+    "(?i)(?:^|[^A-Za-z])(?:example|placeholder|changeme)(?:$|[^A-Za-z])"
+   ],
+   "mask": {
+    "prefix": 0,
+    "suffix": 0
+   },
+   "anchors": [
+    "://"
+   ],
+   "window": {
+    "before": 16,
+    "after": 1024
+   },
+   "source": "custom",
+   "label": "Database URL with password",
+   "allowlists": [
+    {
+     "target": "secret",
+     "regexes": [
+      "@(?:localhost|127\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|0\\.0\\.0\\.0|\\[?::1\\]?|10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|192\\.168\\.\\d{1,3}\\.\\d{1,3}|172\\.(?:1[6-9]|2\\d|3[01])\\.\\d{1,3}\\.\\d{1,3}|[A-Za-z0-9-]+\\.local)(?::\\d+)?(?:[/?#\"'<>\\s]|$)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "http.bearer",
+   "kind": "bearerToken",
+   "confidence": "medium",
+   "pattern": "(?i)\\bbearer\\s+(?<secret>[A-Za-z0-9_\\-.=+/]{20,4096})\\b",
+   "excludedContext": [
+    "(?i)bearer\\s+(?:\\$\\{|<|\\$[A-Z_]+\\b|your[_-]|\\.\\.\\.)"
+   ],
+   "mask": {
+    "prefix": 0,
+    "suffix": 4
+   },
+   "anchors": [
+    "bearer"
+   ],
+   "window": {
+    "before": 8,
+    "after": 4200
+   },
+   "source": "custom",
+   "label": "Bearer token"
+  },
+  {
+   "id": "generic.keyed-secret",
+   "kind": "genericSecret",
+   "confidence": "medium",
+   "layer": "keyed",
+   "pattern": "(?i)(?<key>password|passwd|pwd|secret|token|api[_-]?key|apikey|access[_-]?key|client[_-]?secret|auth[_-]?token)(?<sep>[A-Za-z0-9_]{0,24}?[\"']?\\s*[:=]\\s*[\"']?)(?<secret>[A-Za-z0-9_\\-./+=~!@#$%^&*]{8,256})",
+   "mask": {
+    "prefix": 0,
+    "suffix": 3
+   },
+   "anchors": [
+    "password",
+    "passwd",
+    "pwd",
+    "secret",
+    "token",
+    "api_key",
+    "api-key",
+    "apikey",
+    "access_key",
+    "access-key"
+   ],
+   "window": {
+    "before": 8,
+    "after": 400
+   },
+   "requireNear": {
+    "chars": ":=",
+    "within": 40
+   },
+   "source": "custom",
+   "label": "Possible secret"
+  },
+  {
+   "id": "url.basic-auth",
+   "source": "custom",
+   "label": "URL with embedded credentials",
+   "kind": "databaseURL",
+   "confidence": "high",
+   "canonicalizer": "url",
+   "pattern": "\\b(?<secret>https?://[^\\s:/@\"'<>]{1,64}:(?<password>[^\\s@\"'<>]{4,256})@[^\\s\"'<>]{1,512})",
+   "excludedContext": [
+    "(?i)(?:^|[^A-Za-z])(?:example|placeholder|changeme)(?:$|[^A-Za-z])",
+    "https?://[^\\s:/@\"'<>]{1,64}:(?:\\$\\{|\\$[A-Z_]+@|<|x{4,}@|\\*{3,}@)"
+   ],
+   "anchors": [
+    "http://",
+    "https://"
+   ],
+   "window": {
+    "before": 8,
+    "after": 1024
+   },
+   "mask": {
+    "prefix": 0,
+    "suffix": 0
+   },
+   "allowlists": [
+    {
+     "target": "secret",
+     "regexes": [
+      "@(?:localhost|127\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|0\\.0\\.0\\.0|\\[?::1\\]?|10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|192\\.168\\.\\d{1,3}\\.\\d{1,3}|172\\.(?:1[6-9]|2\\d|3[01])\\.\\d{1,3}\\.\\d{1,3}|[A-Za-z0-9-]+\\.local)(?::\\d+)?(?:[/?#\"'<>\\s]|$)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "huggingface.access-token",
+   "source": "custom",
+   "label": "Hugging Face access token",
+   "kind": "vendorAPIKey",
+   "confidence": "high",
+   "pattern": "\\b(?<secret>hf_[a-zA-Z0-9]{34})\\b",
+   "anchors": [
+    "hf_"
+   ],
+   "window": {
+    "before": 8,
+    "after": 128
+   },
+   "mask": {
+    "prefix": 6,
+    "suffix": 4
+   },
+   "description": "Hugging Face user access token (gitleaks rule misses tokens containing digits)."
+  },
+  {
+   "id": "huggingface.org-token",
+   "source": "custom",
+   "label": "Hugging Face org API token",
+   "kind": "vendorAPIKey",
+   "confidence": "high",
+   "pattern": "\\b(?<secret>api_org_[a-zA-Z0-9]{34})\\b",
+   "anchors": [
+    "api_org_"
+   ],
+   "window": {
+    "before": 8,
+    "after": 128
+   },
+   "mask": {
+    "prefix": 9,
+    "suffix": 4
+   },
+   "description": "Hugging Face organization API token."
+  },
+  {
+   "id": "groq.api-key",
+   "source": "custom",
+   "label": "Groq API key",
+   "kind": "vendorAPIKey",
+   "confidence": "high",
+   "pattern": "\\b(?<secret>gsk_[A-Za-z0-9]{52})\\b",
+   "anchors": [
+    "gsk_"
+   ],
+   "window": {
+    "before": 8,
+    "after": 128
+   },
+   "mask": {
+    "prefix": 6,
+    "suffix": 4
+   },
+   "description": "Groq API key (gsk_ + 52 alphanumeric)."
+  },
+  {
+   "id": "openrouter.api-key",
+   "source": "custom",
+   "label": "OpenRouter API key",
+   "kind": "vendorAPIKey",
+   "confidence": "high",
+   "pattern": "\\b(?<secret>sk-or-v1-[a-f0-9]{64})\\b",
+   "anchors": [
+    "sk-or-v1-"
+   ],
+   "window": {
+    "before": 8,
+    "after": 128
+   },
+   "mask": {
+    "prefix": 9,
+    "suffix": 4
+   },
+   "description": "OpenRouter API key (sk-or-v1- + 64 hex)."
+  },
+  {
+   "id": "replicate.api-token",
+   "source": "custom",
+   "label": "Replicate API token",
+   "kind": "vendorAPIKey",
+   "confidence": "high",
+   "pattern": "\\b(?<secret>r8_[A-Za-z0-9]{36,40})\\b",
+   "anchors": [
+    "r8_"
+   ],
+   "window": {
+    "before": 8,
+    "after": 128
+   },
+   "mask": {
+    "prefix": 5,
+    "suffix": 4
+   },
+   "description": "Replicate API token (r8_ prefix, ~40 chars total)."
+  }
+ ],
+ "placeholders": [
+  "^\\$\\{?[A-Z_][A-Z0-9_]*\\}?$",
+  "^<[^>]+>$",
+  "^\\[[^\\]]+\\]$",
+  "^(.)\\1+$",
+  "(?i)example",
+  "(?i)placeholder",
+  "(?i)your[_-]?(?:api|secret|token|key|password)",
+  "(?i)changeme",
+  "(?i)redacted",
+  "(?i)^(?:xxx+|\\*+|\\.\\.\\.+|true|false|null|none|undefined)$",
+  "(?i)^(?:process\\.env\\.|os\\.environ|env\\.|ENV\\[)"
+ ]
+}

@@ -1,0 +1,2 @@
+{"type":"user","isSidechain":true,"sessionId":"847ab000-0000-4000-8000-000000000001","timestamp":"2026-09-29T07:14:22.000Z","uuid":"sa1","message":{"role":"user","content":"Verify the token works"}}
+{"type":"assistant","isSidechain":true,"sessionId":"847ab000-0000-4000-8000-000000000001","timestamp":"2026-09-29T07:14:22.000Z","uuid":"sa2","message":{"role":"assistant","content":[{"type":"text","text":"Using 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 against api.github.com returned 200."}]}}

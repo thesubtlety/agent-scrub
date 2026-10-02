@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Build universal app (arm64 + x86_64)
+        run: UNIVERSAL=1 ./tools/app/bundle.sh
+
+      - name: Package .app as a zip
+        run: ditto -c -k --sequesterRsrc --keepParent .build/AgentScrub.app "AgentScrub-${GITHUB_REF_NAME}.zip"
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: AgentScrub-*.zip
+          body: |
+            Unsigned universal build — runs on Apple Silicon and Intel, macOS 14+.
+
+            Download `AgentScrub-${{ github.ref_name }}.zip`, unzip it, then in Terminal:
+
+            ```sh
+            xattr -dr com.apple.quarantine AgentScrub.app
+            open AgentScrub.app
+            ```
+
+            (The app is unsigned, so macOS quarantines it on download; the `xattr` line clears that.
+            Alternatively: right-click the app → Open → Open.)

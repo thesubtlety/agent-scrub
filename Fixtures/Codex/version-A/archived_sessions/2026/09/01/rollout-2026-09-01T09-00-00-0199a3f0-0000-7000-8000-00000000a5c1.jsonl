@@ -1,0 +1,2 @@
+{"timestamp":"2026-09-01T09:00:00.000Z","type":"session_meta","payload":{"id":"0199a3f0-0000-7000-8000-00000000a5c1","cwd":"/Users/dev/infra","cli_version":"0.98.0"}}
+{"timestamp":"2026-09-01T09:00:01.000Z","type":"response_item","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"rotate xoxb-1234567890123-1234567890123-FAKEjkq86ciLtoTVkg6nQY7o please"}]}}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- App tile: an AI transcript with one line redacted. No padlocks, shields or keys. -->
+  <rect x="0" y="0" width="1024" height="1024" rx="228" fill="#1C2030"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="228" fill="#262B3D" opacity="0.6"/>
+
+  <!-- lines of "text" -->
+  <rect x="252" y="300" width="520" height="56" rx="28" fill="#9AA3B6"/>
+  <rect x="252" y="412" width="372" height="56" rx="28" fill="#9AA3B6"/>
+
+  <!-- the redacted line -->
+  <rect x="252" y="524" width="520" height="56" rx="28" fill="#FFB24D"/>
+
+  <rect x="252" y="636" width="300" height="56" rx="28" fill="#9AA3B6"/>
+</svg>

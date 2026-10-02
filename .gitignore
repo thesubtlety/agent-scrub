@@ -1,0 +1,11 @@
+.build/
+.swiftpm/
+*.xcodeproj
+xcuserdata/
+DerivedData/
+.DS_Store
+/Package.resolved.bak
+
+# Python bytecode
+__pycache__/
+*.pyc
